@@ -53,7 +53,11 @@ init([]) ->
 handle_call({post, Tag, Msg}, _From, Dict) ->
   {reply, ok, dict:append(lists:sublist(Tag, 20), lists:sublist(Msg, 140), Dict)};
 handle_call({get, Tag, N}, _From, Dict) ->
-  {reply, lists:sublist(dict:fetch(lists:sublist(Tag, 20), Dict), N), Dict}.
+  try dict:fetch(lists:sublist(Tag, 20), Dict) of
+    L -> {reply, lists:sublist(L, N), Dict}
+  catch
+    _:_ -> {reply, [], Dict}
+  end.
 
 %%--------------------------------------------------------------------
 %% Function: handle_cast(Msg, State) -> {noreply, State} |
