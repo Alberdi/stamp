@@ -1,0 +1,9 @@
+<html>
+  <erl>
+    out(A) ->
+      %{html, f("~p~n", [yaws_api:parse_post(A)])}.
+      [{"tag", Tag}, {"msg", Msg}] = yaws_api:parse_post(A),
+      {html, f("~p~n", [stamp_server:post(Tag,Msg)])}.
+  </erl>
+</html>
+

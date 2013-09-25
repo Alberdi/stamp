@@ -1,0 +1,8 @@
+<html>
+  <h1>Foobar</h1>
+  <form name="input" action="post.yaws" method="post">
+    Tag: <input type="text" name="tag"><br>
+    Msg: <input type="text" name="msg">
+    <input type="submit" value="Submit">
+  </form>
+</html>
