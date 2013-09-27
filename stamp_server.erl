@@ -56,7 +56,7 @@ handle_call({get, Tag, N}, _From, Dict) ->
   try dict:fetch(lists:sublist(Tag, 20), Dict) of
     L -> {reply, lists:sublist(L, N), Dict}
   catch
-    _:_ -> {reply, [], Dict}
+    error:badarg -> {reply, [], Dict}
   end.
 
 %%--------------------------------------------------------------------
