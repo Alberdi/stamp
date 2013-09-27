@@ -51,7 +51,8 @@ init([]) ->
 %% Description: Handling call messages
 %%--------------------------------------------------------------------
 handle_call({post, Tag, Msg}, _From, Dict) ->
-  {reply, ok, dict:append(lists:sublist(Tag, 20), lists:sublist(Msg, 140), Dict)};
+  M = lists:sublist(Msg, 140),
+  {reply, ok, dict:update(lists:sublist(Tag, 20), fun(Old) -> [M|Old] end, [M], Dict)};
 handle_call({get, Tag, N}, _From, Dict) ->
   case dict:find(lists:sublist(Tag, 20), Dict) of
     {ok, L} -> {reply, lists:sublist(L, N), Dict};
