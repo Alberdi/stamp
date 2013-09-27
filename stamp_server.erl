@@ -53,10 +53,9 @@ init([]) ->
 handle_call({post, Tag, Msg}, _From, Dict) ->
   {reply, ok, dict:append(lists:sublist(Tag, 20), lists:sublist(Msg, 140), Dict)};
 handle_call({get, Tag, N}, _From, Dict) ->
-  try dict:fetch(lists:sublist(Tag, 20), Dict) of
-    L -> {reply, lists:sublist(L, N), Dict}
-  catch
-    error:badarg -> {reply, [], Dict}
+  case dict:find(lists:sublist(Tag, 20), Dict) of
+    {ok, L} -> {reply, lists:sublist(L, N), Dict};
+    error -> {reply, [], Dict}
   end.
 
 %%--------------------------------------------------------------------
