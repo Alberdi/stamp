@@ -54,12 +54,12 @@ init([]) ->
 %% Description: Handling call messages
 %%--------------------------------------------------------------------
 handle_call({post, Tag, Msg}, _From, {Dict, Tags}) ->
-  M = lists:sublist(Msg, 140),
-  T = lists:sublist(Tag, 20),
+  M = normalize(msg, Msg),
+  T = normalize(tag, Tag),
   {reply, ok, {dict:update(T, fun(Old) -> [M|Old] end, [M], Dict), [T|lists:delete(T, Tags)]}};
 
 handle_call({get, Tag, N}, _From, {Dict, Tags}) ->
-  case dict:find(lists:sublist(Tag, 20), Dict) of
+  case dict:find(normalize(tag, Tag), Dict) of
     {ok, L} -> {reply, lists:sublist(L, N), {Dict, Tags}};
     error -> {reply, [], {Dict, Tags}}
   end;
@@ -105,3 +105,9 @@ code_change(_OldVsn, State, _Extra) ->
 %%--------------------------------------------------------------------
 %%% Internal functions
 %%--------------------------------------------------------------------
+normalize(tag, Tag) -> 
+  normalize(string:to_lower(Tag), 20);
+normalize(msg, Msg) ->
+  normalize(Msg, 140);
+normalize(Str, N) ->
+  lists:sublist(string:strip(Str), N).
