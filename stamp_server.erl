@@ -3,7 +3,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, post/2, get/2]).
+-export([start_link/0, post/2, get/2, get_tags/1]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -27,6 +27,9 @@ post(Tag, Msg) ->
 get(Tag, N) ->
   gen_server:call(server, {get, Tag, N}).
 
+get_tags(N) ->
+  gen_server:call(server, {gettags, N}).
+
 %%====================================================================
 %% gen_server callbacks
 %%====================================================================
@@ -39,7 +42,7 @@ get(Tag, N) ->
 %% Description: Initiates the server
 %%--------------------------------------------------------------------
 init([]) ->
-  {ok, dict:new()}.
+  {ok, {dict:new(), []}}.
 
 %%--------------------------------------------------------------------
 %% Function: %% handle_call(Request, From, State) -> {reply, Reply, State} |
@@ -50,14 +53,19 @@ init([]) ->
 %%                                      {stop, Reason, State}
 %% Description: Handling call messages
 %%--------------------------------------------------------------------
-handle_call({post, Tag, Msg}, _From, Dict) ->
+handle_call({post, Tag, Msg}, _From, {Dict, Tags}) ->
   M = lists:sublist(Msg, 140),
-  {reply, ok, dict:update(lists:sublist(Tag, 20), fun(Old) -> [M|Old] end, [M], Dict)};
-handle_call({get, Tag, N}, _From, Dict) ->
+  T = lists:sublist(Tag, 20),
+  {reply, ok, {dict:update(T, fun(Old) -> [M|Old] end, [M], Dict), [T|lists:delete(T, Tags)]}};
+
+handle_call({get, Tag, N}, _From, {Dict, Tags}) ->
   case dict:find(lists:sublist(Tag, 20), Dict) of
-    {ok, L} -> {reply, lists:sublist(L, N), Dict};
-    error -> {reply, [], Dict}
-  end.
+    {ok, L} -> {reply, lists:sublist(L, N), {Dict, Tags}};
+    error -> {reply, [], {Dict, Tags}}
+  end;
+
+handle_call({gettags, N}, _From, {Dict, Tags}) ->
+  {reply, lists:sublist(Tags, N), {Dict, Tags}}.
 
 %%--------------------------------------------------------------------
 %% Function: handle_cast(Msg, State) -> {noreply, State} |
