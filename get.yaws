@@ -1,11 +1,16 @@
-<html>
-  <table>
+<erl>
+  out(A) -> yaws_api:ssi(A#arg.docroot, ["HEAD.html"]).
+</erl>
+
+<table>
   <erl>
     out(A) ->
       %{html, f("~p~n", [yaws_api:parse_query(A)])}.
       [{"tag", Tag}] = yaws_api:parse_query(A),
       {ehtml, [{tr, [], {td, [], X}} || X <- stamp_server:get(Tag, 50)]}.
   </erl>
-  </table>
-</html>
+</table>
 
+<erl>
+  out(A) -> yaws_api:ssi(A#arg.docroot, ["END.html"]).
+</erl>

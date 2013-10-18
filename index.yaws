@@ -1,8 +1,14 @@
-<html>
-  <h1>Foobar</h1>
+<erl>
+  out(A) -> yaws_api:ssi(A#arg.docroot, ["HEAD.html"]).
+</erl>
+
+<h1>Foobar</h1>
   <form name="input" action="post.yaws" method="post">
     Tag: <input type="text" name="tag"><br>
     Msg: <input type="text" name="msg">
     <input type="submit" value="Submit">
   </form>
-</html>
+
+<erl>
+  out(A) -> yaws_api:ssi(A#arg.docroot, ["END.html"]).
+</erl>
