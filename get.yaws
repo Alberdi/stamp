@@ -4,7 +4,7 @@
 
 <h1>
   <erl>
-    out(A) -> [{"tag", Tag}] = yaws_api:parse_query(A), {ehtml, Tag}.
+    out(A) -> [{"tag", Tag}] = yaws_api:parse_query(A), {ehtml, stamp_server:normalize(tag, Tag)}.
   </erl>
 </h1>
 <hr>
