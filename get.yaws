@@ -2,6 +2,13 @@
   out(A) -> yaws_api:ssi(A#arg.docroot, ["HEAD.html"]).
 </erl>
 
+<h1>
+  <erl>
+    out(A) -> [{"tag", Tag}] = yaws_api:parse_query(A), {ehtml, Tag}.
+  </erl>
+</h1>
+<hr>
+
 <table>
   <erl>
     out(A) ->
