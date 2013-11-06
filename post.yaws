@@ -1,15 +1,8 @@
 <erl>
-  out(A) -> yaws_api:ssi(A#arg.docroot, ["HEAD.html"]).
-</erl>
-
-
-<erl>
   out(A) ->
     %{html, f("~p~n", [yaws_api:parse_post(A)])}.
     [{"tag", Tag}, {"msg", Msg}] = yaws_api:parse_post(A),
-    {html, f("~p~n", [stamp_server:post(Tag,Msg)])}.
+    stamp_server:post(Tag, Msg),
+    {redirect_local, f("/get.yaws?tag=~s", [Tag])}.
 </erl>
 
-<erl>
-  out(A) -> yaws_api:ssi(A#arg.docroot, ["HEAD.html"]).
-</erl>
