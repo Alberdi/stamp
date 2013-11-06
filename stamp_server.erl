@@ -3,7 +3,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, post/2, get/2, get_tags/1]).
+-export([start_link/0, post/2, get/2, get_tags/1, normalize/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -29,6 +29,13 @@ get(Tag, N) ->
 
 get_tags(N) ->
   gen_server:call(server, {gettags, N}).
+
+normalize(tag, Tag) -> 
+  normalize(string:to_lower(Tag), 20);
+normalize(msg, Msg) ->
+  normalize(Msg, 140);
+normalize(Str, N) ->
+  lists:sublist(string:strip(Str), N).
 
 %%====================================================================
 %% gen_server callbacks
@@ -105,9 +112,4 @@ code_change(_OldVsn, State, _Extra) ->
 %%--------------------------------------------------------------------
 %%% Internal functions
 %%--------------------------------------------------------------------
-normalize(tag, Tag) -> 
-  normalize(string:to_lower(Tag), 20);
-normalize(msg, Msg) ->
-  normalize(Msg, 140);
-normalize(Str, N) ->
-  lists:sublist(string:strip(Str), N).
+
