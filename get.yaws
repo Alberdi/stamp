@@ -9,14 +9,13 @@
 </h1>
 <hr>
 
-<table>
+<ol>
   <erl>
     out(A) ->
-      %{html, f("~p~n", [yaws_api:parse_query(A)])}.
       [{"tag", Tag}] = yaws_api:parse_query(A),
-      {ehtml, [{tr, [], {td, [], X}} || X <- stamp_server:get(Tag, 50)]}.
+      {ehtml, [{li, [], X} || X <- stamp_server:get(Tag, 50)]}.
   </erl>
-</table>
+</ol>
 
 <erl>
   out(A) -> yaws_api:ssi(A#arg.docroot, ["END.html"]).
