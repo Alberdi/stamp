@@ -63,7 +63,10 @@ init([]) ->
 handle_call({post, Tag, Msg}, _From, {Dict, Tags}) ->
   M = normalize(msg, Msg),
   T = normalize(tag, Tag),
-  {reply, ok, {dict:update(T, fun(Old) -> [M|Old] end, [M], Dict), [T|lists:delete(T, Tags)]}};
+  case M == [] orelse T == [] of
+    true -> {reply, nook, {Dict, Tags}};
+    false -> {reply, ok, {dict:update(T, fun(Old) -> [M|Old] end, [M], Dict), [T|lists:delete(T, Tags)]}}
+  end;
 
 handle_call({get, Tag, N}, _From, {Dict, Tags}) ->
   case dict:find(normalize(tag, Tag), Dict) of
