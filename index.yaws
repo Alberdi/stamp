@@ -2,11 +2,11 @@
   out(A) -> yaws_api:ssi(A#arg.docroot, ["HEAD.html"]).
 </erl>
 
-<h1>Foobar</h1>
+<h1>Stamp</h1>
   <form name="input" action="post.yaws" method="post">
-    Tag: <input type="text" name="tag"><br>
-    Msg: <input type="text" name="msg">
-    <input type="submit" value="Submit">
+    <label for="tag">Tag:</label><br><input type="text" name="tag" id="tag"><br>
+    <label for="msg">Msg:</label><br><input type="text" name="msg" id="msg"><br>
+    <input type="submit" value="Stamp">
   </form>
 
 <erl>
