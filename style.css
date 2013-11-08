@@ -55,6 +55,17 @@ p {
   line-height: 1.5em;
 }
 
+ul.footer {
+  list-style: square;
+  margin: 100px auto;
+  width: 60%;
+}
+
+ul.footer li {
+  margin-left: 40px;
+  float: left;
+}
+
 .dotted {
   color: #cccccc;
   font-size: 10px;
