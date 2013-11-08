@@ -17,6 +17,17 @@
   </erl>
 </ol>
 
+<h2>Stamp on this tag</h2>
+<form name="input" action="post.yaws" method="post">
+  <input type="hidden" value=
+  "<erl>
+    out(A) -> [{"tag", Tag}] = yaws_api:parse_query(A), {ehtml, stamp_server:normalize(tag, Tag)}.
+  </erl>"
+    name="tag" id="tag" />
+  <input type="text" name="msg" id="msg"><br>
+  <input type="submit" value="Stamp">
+</form>
+
 <erl>
   out(A) -> yaws_api:ssi(A#arg.docroot, ["END.html"]).
 </erl>
