@@ -13,7 +13,7 @@
   <erl>
     out(A) ->
       [{"tag", Tag}] = yaws_api:parse_query(A),
-      {ehtml, [{li, [], X} || X <- stamp_server:get(Tag, 50)]}.
+      {ehtml, [{li, [], X} || X <- stamp_server:get(Tag, 25)]}.
   </erl>
 </ol>
 
