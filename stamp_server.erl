@@ -31,11 +31,12 @@ get_tags(N) ->
   gen_server:call(server, {gettags, N}).
 
 normalize(tag, Tag) -> 
-  normalize(string:to_lower(Tag), 20);
+  normalize(string:to_lower(Tag), 20, "[^a-z#]");
 normalize(msg, Msg) ->
-  normalize(Msg, 140);
-normalize(Str, N) ->
-  lists:sublist(string:strip(Str), N).
+  normalize(string:strip(Msg), 140, "[<>]").
+
+normalize(Str, N, Pat) ->
+  lists:sublist(re:replace(Str, Pat, "", [global, {return, list}]), N).
 
 %%====================================================================
 %% gen_server callbacks
