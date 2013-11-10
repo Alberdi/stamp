@@ -31,7 +31,7 @@ get_tags(N) ->
   gen_server:call(server, {gettags, N}).
 
 normalize(tag, Tag) -> 
-  normalize(string:to_lower(Tag), 20, "[^a-z#]");
+  normalize(string:to_lower(Tag), 20, "[^a-z]");
 normalize(msg, Msg) ->
   normalize(string:strip(Msg), 140, "[<>]").
 
