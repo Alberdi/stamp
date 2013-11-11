@@ -10,6 +10,8 @@
          terminate/2, code_change/3]).
 
 -define(SERVER, ?MODULE).
+-define(MAX_TAGS, 100).
+-define(MAX_MSGS, 100).
 
 %%====================================================================
 %% API
@@ -66,7 +68,8 @@ handle_call({post, Tag, Msg}, _From, {Dict, Tags}) ->
   T = normalize(tag, Tag),
   case M == [] orelse T == [] of
     true -> {reply, nook, {Dict, Tags}};
-    false -> {reply, ok, {dict:update(T, fun(Old) -> [M|Old] end, [M], Dict), [T|lists:delete(T, Tags)]}}
+    false -> {reply, ok, {dict:update(T, fun(Old) -> lists:sublist([M|Old], ?MAX_MSGS) end, [M], Dict),
+                          lists:sublist([T|lists:delete(T, Tags)], ?MAX_TAGS)}}
   end;
 
 handle_call({get, Tag, N}, _From, {Dict, Tags}) ->
