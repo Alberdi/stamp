@@ -37,9 +37,6 @@ normalize(tag, Tag) ->
 normalize(msg, Msg) ->
   normalize(string:strip(Msg), 140, "[<>]").
 
-normalize(Str, N, Pat) ->
-  lists:sublist(re:replace(Str, Pat, "", [global, {return, list}]), N).
-
 %%====================================================================
 %% gen_server callbacks
 %%====================================================================
@@ -119,4 +116,6 @@ code_change(_OldVsn, State, _Extra) ->
 %%--------------------------------------------------------------------
 %%% Internal functions
 %%--------------------------------------------------------------------
+normalize(Str, N, Pat) ->
+  lists:sublist(re:replace(Str, Pat, "", [global, {return, list}]), N).
 
