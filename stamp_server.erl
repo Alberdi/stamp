@@ -61,7 +61,7 @@ init([]) ->
 %% Description: Handling call messages
 %%--------------------------------------------------------------------
 handle_call({post, Tag, Msg}, _From, {Dict, Tags}) ->
-  M = normalize(msg, Msg),
+  M = preprocess(normalize(msg, Msg)),
   T = normalize(tag, Tag),
   case M == [] orelse T == [] of
     true -> {reply, nook, {Dict, Tags}};
@@ -118,4 +118,11 @@ code_change(_OldVsn, State, _Extra) ->
 %%--------------------------------------------------------------------
 normalize(Str, N, Pat) ->
   lists:sublist(re:replace(Str, Pat, "", [global, {return, list}]), N).
+
+preprocess(Msg) ->
+  Subs = [{"\\$date", io_lib:format("<span>~w-~2..0w-~2..0w</span>", tuple_to_list(date()))},
+          {"\\$time", io_lib:format("<span>~2..0w:~2..0w:~2..0w</span>", tuple_to_list(time()))}],
+  lists:foldl(
+    fun({Pat, Sub}, M) -> re:replace(M, Pat, Sub, [global, {return, list}]) end,
+    Msg, Subs).
 
