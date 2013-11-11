@@ -122,7 +122,5 @@ normalize(Str, N, Pat) ->
 preprocess(Msg) ->
   Subs = [{"\\$date", io_lib:format("<span>~w-~2..0w-~2..0w</span>", tuple_to_list(date()))},
           {"\\$time", io_lib:format("<span>~2..0w:~2..0w:~2..0w</span>", tuple_to_list(time()))}],
-  lists:foldl(
-    fun({Pat, Sub}, M) -> re:replace(M, Pat, Sub, [global, {return, list}]) end,
-    Msg, Subs).
+  lists:foldl(fun({Pat, Sub}, M) -> re:replace(M, Pat, Sub, [global, {return, list}]) end, Msg, Subs).
 
