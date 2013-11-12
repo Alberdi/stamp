@@ -30,3 +30,12 @@ button {
   min-height: 100px;
   max-height: 155px;
 }
+
+span {
+  font-family: monospace;
+  background-color: #428bca;
+  border-color: #357ebd;
+  color: #fff;
+  padding: 0.1em 0.5em;
+  border-radius: 0.5em;
+}
