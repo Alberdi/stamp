@@ -119,8 +119,20 @@ code_change(_OldVsn, State, _Extra) ->
 normalize(Str, N, Pat) ->
   lists:sublist(re:replace(Str, Pat, "", [global, {return, list}]), N).
 
-preprocess(Msg) ->
-  Subs = [{"\\$date", io_lib:format("<span>~w-~2..0w-~2..0w</span>", tuple_to_list(date()))},
-          {"\\$time", io_lib:format("<span>~2..0w:~2..0w:~2..0w</span>", tuple_to_list(time()))}],
-  lists:foldl(fun({Pat, Sub}, M) -> re:replace(M, Pat, Sub, [global, {return, list}]) end, Msg, Subs).
+serverfun_date() -> io_lib:format("<span>~w-~2..0w-~2..0w</span>", tuple_to_list(date())).
 
+serverfun_time() -> io_lib:format("<span>~2..0w:~2..0w:~2..0w</span>", tuple_to_list(time())).
+
+replace_matches(Msg, [[{Start, Length}] | T]) ->
+  Subs = [{"date", fun serverfun_date/0}, {"time", fun serverfun_time/0}],
+  case lists:keyfind(string:substr(Msg, Start+1, Length), 1, Subs) of
+    false -> replace_matches(Msg, T);
+    {Key, Fun} -> replace_matches(re:replace(Msg, string:concat("\\$", Key), Fun(), [{offset, Start-1}, {return, list}]), T)
+  end;
+replace_matches(Msg, []) -> Msg.
+
+preprocess(Msg) ->
+  case re:run(Msg, "\\$([a-z]*)", [global, {capture, all_but_first}]) of
+    nomatch -> Msg;
+    {match, Matches} -> replace_matches(Msg, lists:reverse(Matches))
+  end.
