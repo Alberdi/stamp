@@ -1,0 +1,32 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 3em;
+  text-align: center;
+}
+
+ul {
+  list-style: circle;
+}
+
+ul li {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+footer {
+  text-align: center;
+}
+
+button {
+  margin-top: 12px;  
+}
+
+#msg {
+  margin-top: 5px;
+  min-height: 100px;
+  max-height: 155px;
+}
