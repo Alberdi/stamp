@@ -2,13 +2,43 @@
   out(A) -> yaws_api:ssi(A#arg.docroot, ["HEAD.html"]).
 </erl>
 
-<h1>Stamp</h1>
-  <form name="input" action="post.yaws" method="post">
-    <label for="tag">Tag:</label><br><input type="text" name="tag" id="tag"><br>
-    <label for="msg">Msg:</label><br><input type="text" name="msg" id="msg"><br>
-    <input type="submit" value="Stamp">
-  </form>
+  <h1>Stamp</h1>
+
+  <section class="row">
+	  <article class="col-md-3 col-md-offset-3">
+	  	<h2>New Tag</h2>
+	  	<hr />
+		  <form class="form-signin" id="input" name="input" action="post.yaws" method="post">
+        <input type="text" class="form-control" placeholder="Tag" name="tag" id="tag" required autofocus>
+        <textarea class="form-control" placeholder="Message" name="msg" id="msg" maxlength="140" required></textarea>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" value="Stamp">Stamp</button>
+      </form>
+		</article>
+
+		<article class="col-md-2 col-md-offset-1">
+		  <h2>Recent tags</h2>
+
+		  <hr />
+			<ol>
+			  <erl>
+    out(A) ->
+      {ehtml, [{li, [], {a, [f("href='get.yaws?tag=~s'", [X])], X}} || X <- stamp_server:get_tags(10)]}.
+  </erl>
+			</ol>
+		</article>
+	</section>
+
+  <script>
+    document.getElementById("msg").onkeyup = function () {
+      var key = event;
+      if (key.keyCode === 13 && !key.ctrlKey && this.textLength > 0) {
+        document.getElementById("input").submit();
+      }
+      return true;
+    }
+  </script>
 
 <erl>
   out(A) -> yaws_api:ssi(A#arg.docroot, ["END.html"]).
 </erl>
+

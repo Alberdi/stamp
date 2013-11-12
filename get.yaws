@@ -2,31 +2,48 @@
   out(A) -> yaws_api:ssi(A#arg.docroot, ["HEAD.html"]).
 </erl>
 
-<h1>
-  <erl>
-    out(A) -> [{"tag", Tag}] = yaws_api:parse_query(A), {ehtml, stamp_server:normalize(tag, Tag)}.
-  </erl>
-</h1>
-<hr>
+  <h1>Stamp
+    <small>
+      <erl>
+        out(A) -> [{"tag", Tag}] = yaws_api:parse_query(A), {ehtml, stamp_server:normalize(tag, Tag)}.
+      </erl>
+    </small>
+  </h1>
+  <section class="row">
+    <article class="col-md-4 col-md-offset-4">
+      <form class="form-signin" id="input" name="input" action="post.yaws" method="post">
+        <input type="hidden" value=
+          "<erl>
+            out(A) -> [{"tag", Tag}] = yaws_api:parse_query(A), {ehtml, stamp_server:normalize(tag, Tag)}.
+          </erl>"
+          name="tag" id="tag" />
+        <textarea class="form-control" placeholder="New Message" name="msg" id="msg" maxlength="144" required></textarea>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" value="Stamp">Stamp</button>
+      </form>
+    </article>
 
-<form name="input" action="post.yaws" method="post">
-  <input type="hidden" value=
-  "<erl>
-    out(A) -> [{"tag", Tag}] = yaws_api:parse_query(A), {ehtml, stamp_server:normalize(tag, Tag)}.
-  </erl>"
-    name="tag" id="tag" />
-  <input type="text" name="msg" id="msg">
-  <input type="submit" value="Stamp">
-</form>
+  </section>
+  <section class="row">
+    <article class="col-md-4 col-md-offset-4">
+      <hr />
+      <ol>
+        <erl>
+          out(A) -> [{"tag", Tag}] = yaws_api:parse_query(A), {ehtml, [{li, [], X} || X <- stamp_server:get(Tag, 25)]}.
+        </erl>
+      </ol>
+    </article>
+  </section>
 
-<ol>
-  <erl>
-    out(A) ->
-      [{"tag", Tag}] = yaws_api:parse_query(A),
-      {ehtml, [{li, [], X} || X <- stamp_server:get(Tag, 25)]}.
-  </erl>
-</ol>
+  <script>
+    document.getElementById("msg").onkeyup = function () {
+      var key = event;
+      if (key.keyCode === 13 && !key.ctrlKey) {
+        document.getElementById("input").submit();
+      }
+      return true;
+    }
 
+  </script>
 
 <erl>
   out(A) -> yaws_api:ssi(A#arg.docroot, ["END.html"]).
