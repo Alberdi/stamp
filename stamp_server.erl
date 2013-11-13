@@ -119,15 +119,44 @@ code_change(_OldVsn, State, _Extra) ->
 normalize(Str, N, Pat) ->
   lists:sublist(re:replace(Str, Pat, "", [global, {return, list}]), N).
 
-serverfun_date() -> io_lib:format("<span>~w-~2..0w-~2..0w</span>", tuple_to_list(date())).
+serverfun_date(_) ->
+  io_lib:format("<span>~w-~2..0w-~2..0w</span>", tuple_to_list(date())).
 
-serverfun_time() -> io_lib:format("<span>~2..0w:~2..0w:~2..0w</span>", tuple_to_list(time())).
+serverfun_time(_) ->
+  io_lib:format("<span>~2..0w:~2..0w:~2..0w</span>", tuple_to_list(time())).
 
-replace_matches(Msg, [[{Start, Length}] | T]) ->
-  Subs = [{"date", fun serverfun_date/0}, {"time", fun serverfun_time/0}],
-  case lists:keyfind(string:substr(Msg, Start+1, Length), 1, Subs) of
+serverfun_dice_int(0, _) -> 0;
+serverfun_dice_int(Dices, Sides) ->
+  random:uniform(Sides) + serverfun_dice_int(Dices-1, Sides).
+
+serverfun_dice([Dices, Sides]) ->
+  {D, _} = string:to_integer(Dices),
+  {S, _} = string:to_integer(Sides),
+  if S > 20 -> "<span class='error'>dice overflow</span>";
+     S =< 20 andalso D >= 0 -> io_lib:format("<span>~sd~s=~B</span>", [Dices, Sides, serverfun_dice_int(D, S)])
+  end.
+
+get_substrs_aux(String, [{Start, Length} | T], Substrs) ->
+  get_substrs_aux(String, T, [string:substr(String, Start+1, Length) | Substrs]);
+get_substrs_aux(_, [], Substrs) -> Substrs.
+
+get_substrs(String, L) ->
+  get_substrs_aux(String, L, []).
+
+get_replacement(SubMsg, [{Pat, Fun} | T]) ->
+  case re:run(SubMsg, string:concat("^", Pat)) of
+    nomatch -> get_replacement(SubMsg, T);
+    {match, [TotalMatch | SubMatches]} -> {get_substrs(SubMsg, [TotalMatch]), Fun(lists:reverse(get_substrs(SubMsg, SubMatches)))}
+  end;
+get_replacement(_, []) -> false.
+
+replace_matches(Msg, [[{Start, _Length}] | T]) ->
+  Subs = [{"date", fun serverfun_date/1},
+          {"time", fun serverfun_time/1},
+          {"(\\d)dice(\\d\\d?)", fun serverfun_dice/1}],
+  case get_replacement(string:substr(Msg, Start+1), Subs) of
     false -> replace_matches(Msg, T);
-    {Key, Fun} -> replace_matches(re:replace(Msg, string:concat("\\$", Key), Fun(), [{offset, Start-1}, {return, list}]), T)
+    {Match, Replacement} -> replace_matches(re:replace(Msg, string:concat("\\$", Match), Replacement, [{offset, Start-1}, {return, list}]), T)
   end;
 replace_matches(Msg, []) -> Msg.
 
