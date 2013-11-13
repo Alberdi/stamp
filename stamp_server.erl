@@ -154,14 +154,14 @@ replace_matches(Msg, [[{Start, _Length}] | T]) ->
   Subs = [{"date", fun serverfun_date/1},
           {"time", fun serverfun_time/1},
           {"(\\d)dice(\\d\\d?)", fun serverfun_dice/1}],
-  case get_replacement(string:substr(Msg, Start+1), Subs) of
+  case get_replacement(string:substr(Msg, Start+2), Subs) of
     false -> replace_matches(Msg, T);
-    {Match, Replacement} -> replace_matches(re:replace(Msg, string:concat("\\$", Match), Replacement, [{offset, Start-1}, {return, list}]), T)
+    {Match, Replacement} -> replace_matches(re:replace(Msg, string:concat("\\$", Match), Replacement, [{offset, Start}, {return, list}]), T)
   end;
 replace_matches(Msg, []) -> Msg.
 
 preprocess(Msg) ->
-  case re:run(Msg, "\\$([a-z]*)", [global, {capture, all_but_first}]) of
+  case re:run(Msg, "\\$", [global]) of
     nomatch -> Msg;
     {match, Matches} -> replace_matches(Msg, lists:reverse(Matches))
   end.
