@@ -35,7 +35,7 @@ get_tags(N) ->
 normalize(tag, Tag) -> 
   normalize(string:to_lower(Tag), 20, "[^a-z]");
 normalize(msg, Msg) ->
-  normalize(string:strip(Msg), 140, "[<>]").
+  string:strip(normalize(Msg, 140, "[<>\t\r\n]")).
 
 %%====================================================================
 %% gen_server callbacks
