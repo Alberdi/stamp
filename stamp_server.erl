@@ -129,6 +129,9 @@ serverfun_dice_int(0, _) -> 0;
 serverfun_dice_int(Dices, Sides) ->
   random:uniform(Sides) + serverfun_dice_int(Dices-1, Sides).
 
+serverfun_fortune(_) ->
+  os:cmd("fortune").
+
 serverfun_dice([Dices, Sides]) ->
   {D, _} = string:to_integer(Dices),
   {S, _} = string:to_integer(Sides),
@@ -160,8 +163,18 @@ replace_matches(Msg, [[{Start, _Length}] | T]) ->
   end;
 replace_matches(Msg, []) -> Msg.
 
-preprocess(Msg) ->
-  case re:run(Msg, "\\$", [global]) of
-    nomatch -> Msg;
-    {match, Matches} -> replace_matches(Msg, lists:reverse(Matches))
+replace_full(Msg) ->
+  Subs = [{"€fortune", fun serverfun_fortune/1}],
+  [Key | Params] = string:tokens(Msg, " "),
+  case lists:keyfind(Key, 1, Subs) of
+    false -> Msg;
+    {Key, Fun} -> Fun(Params)
   end.
+
+preprocess(Msg) ->
+  NewMsg = replace_full(Msg),
+  case re:run(NewMsg, "\\$", [global]) of
+    nomatch -> NewMsg;
+    {match, Matches} -> replace_matches(NewMsg, lists:reverse(Matches))
+  end.
+
