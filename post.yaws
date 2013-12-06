@@ -2,7 +2,7 @@
   out(A) ->
     %{html, f("~p~n", [yaws_api:parse_post(A)])}.
     [{"tag", Tag}, {"msg", Msg}] = yaws_api:parse_post(A),
-    stamp_server:post(Tag, Msg),
+    stamp_server:post(Tag, Msg, A#arg.client_ip_port),
     {redirect_local, f("/get.yaws?tag=~s", [Tag])}.
 </erl>
 
